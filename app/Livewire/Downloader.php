@@ -10,7 +10,6 @@ class Downloader extends Component
 {
     public $url;
     public $downloadType = 'video';
-    public $isDownloading = false;
 
     public function download()
     {
@@ -19,31 +18,47 @@ class Downloader extends Component
             'downloadType' => 'required|in:video,audio'
         ]);
 
-        $this->isDownloading = true;
+        // Determinar qué script usar
+        $scriptName = $this->downloadType === 'video'
+            ? 'Video.py'
+            : 'Audio.py';
 
-        $scriptPath = public_path('scripts\download.py');
+        // Ajustar ruta usando public_path()
+        $scriptPath = public_path('scripts' . DIRECTORY_SEPARATOR . $scriptName);
+
+        // Verificar si el archivo existe
+        if (!file_exists($scriptPath)) {
+            session()->flash('error', 'Error: El script de descarga no existe');
+            return;
+        }
 
         $process = new Process([
             'python',
             $scriptPath,
-            $this->url,
-            $this->downloadType
+            $this->url
         ]);
 
         try {
+            $process->setTimeout(300);  // 5 minutos de timeout
             $process->mustRun();
 
-            if ($process->isSuccessful()) {
-                session()->flash('message', 'Descarga completada en public/downloads');
-            } else {
-                $errorOutput = $process->getErrorOutput();
-                session()->flash('error', 'Error: ' . explode('error:', $errorOutput)[1] ?? $errorOutput);
-            }
+            $message = $this->downloadType === 'video'
+                ? 'Video descargado exitosamente'
+                : 'Audio descargado exitosamente';
 
-        } catch (ProcessFailedException $e) {
-            session()->flash('error', 'Error: ' . $e->getMessage());
-        } finally {
-            $this->isDownloading = false;
+            session()->flash('message', $message);
+        } catch (ProcessFailedException $exception) {
+            // Mejor manejo de errores incluyendo salida del script
+            $errorOutput = $exception->getProcess()->getErrorOutput();
+
+            $error = match (true) {
+                str_contains($errorOutput, 'Unsupported URL') => 'URL no válida o no soportada',
+                str_contains($errorOutput, 'FFmpeg') => 'Error al procesar el archivo: Verifica que FFmpeg esté instalado',
+                str_contains($errorOutput, 'error:') => 'Error en la descarga: ' . explode('error:', $errorOutput)[1],
+                default => 'Error desconocido: ' . $errorOutput
+            };
+
+            session()->flash('error', $error);
         }
     }
 

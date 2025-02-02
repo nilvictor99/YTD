@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Download;
 use Livewire\Component;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -28,9 +29,18 @@ class Downloader extends Component
 
         // Verificar si el archivo existe
         if (!file_exists($scriptPath)) {
-            session()->flash('error', 'Error: El script de descarga no existe');
+            session()->flash('error', __('Error: The download script does not exist'));
             return;
         }
+
+        $download = Download::create([
+            'user_id' => auth()->id(),  // o asigna un valor por defecto si no está autenticado
+            'url' => $this->url,
+            'download_type' => $this->downloadType,
+            'selected_format' => '', // o puedes asignar algún valor, si aplica
+            'status' => 'pending',
+            'message' => __('Download started')
+        ]);
 
         $process = new Process([
             'python',
@@ -43,8 +53,13 @@ class Downloader extends Component
             $process->mustRun();
 
             $message = $this->downloadType === 'video'
-                ? 'Video descargado exitosamente'
-                : 'Audio descargado exitosamente';
+                ? __('Video downloaded successfully')
+                : __('Audio downloaded successfully');
+
+            $download->update([
+                'status' => 'completed',
+                'message' => $message
+            ]);
 
             session()->flash('message', $message);
         } catch (ProcessFailedException $exception) {
@@ -52,11 +67,16 @@ class Downloader extends Component
             $errorOutput = $exception->getProcess()->getErrorOutput();
 
             $error = match (true) {
-                str_contains($errorOutput, 'Unsupported URL') => 'URL no válida o no soportada',
-                str_contains($errorOutput, 'FFmpeg') => 'Error al procesar el archivo: Verifica que FFmpeg esté instalado',
-                str_contains($errorOutput, 'error:') => 'Error en la descarga: ' . explode('error:', $errorOutput)[1],
-                default => 'Error desconocido: ' . $errorOutput
+                str_contains($errorOutput, 'Unsupported URL') => __('Invalid or unsupported URL'),
+                str_contains($errorOutput, 'FFmpeg') => __('Error processing file: Verify that FFmpeg is installed'),
+                str_contains($errorOutput, 'error:') => __('Download error: ') . explode('error:', $errorOutput)[1],
+                default => __('Unknown error: ') . $errorOutput
             };
+
+            $download->update([
+                'status' => 'failed',
+                'message' => $error
+            ]);
 
             session()->flash('error', $error);
         }

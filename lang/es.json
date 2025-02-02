@@ -239,5 +239,12 @@
     "Download type": "Tipo de descarga",
     "Selected format": "Formato seleccionado", 
     "Status": "Estado",
-    "Message": "Mensaje"
+    "Message": "Mensaje",
+    "Error: The download script does not exist": "Error: El script de descarga no existe",
+    "Video downloaded successfully": "Video descargado correctamente",
+    "Audio downloaded successfully": "Audio descargado correctamente", 
+    "Invalid or unsupported URL": "URL inválida o no soportada",
+    "Error processing file: Verify that FFmpeg is installed": "Error procesando archivo: Verifique que FFmpeg esté instalado",
+    "Download error: ": "Error de descarga: ",
+    "Unknown error: ": "Error desconocido: "
 }

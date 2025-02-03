@@ -13,7 +13,7 @@ class ListDownloads extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(__('dowload.Create_Dowload')),
+            //Actions\CreateAction::make(__('dowload.Create_Dowload')),
         ];
     }
 }

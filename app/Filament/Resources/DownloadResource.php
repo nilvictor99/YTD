@@ -78,11 +78,9 @@ class DownloadResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('url')
                     ->translateLabel()
+                    ->limit(30)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('download_type')
-                    ->translateLabel()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('selected_format')
                     ->translateLabel()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
@@ -109,7 +107,8 @@ class DownloadResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                //Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -131,9 +130,9 @@ class DownloadResource extends Resource
     {
         return [
             'index' => Pages\ListDownloads::route('/'),
-            'create' => Pages\CreateDownload::route('/create'),
-            'view' => Pages\ViewDownload::route('/{record}'),
-            'edit' => Pages\EditDownload::route('/{record}/edit'),
+            // 'create' => Pages\CreateDownload::route('/create'),
+            // 'view' => Pages\ViewDownload::route('/{record}'),
+            // 'edit' => Pages\EditDownload::route('/{record}/edit'),
         ];
     }
 

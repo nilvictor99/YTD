@@ -95,11 +95,11 @@ class UserResource extends Resource
                 Tables\Columns\ImageColumn::make('avatar_url')
                     ->translateLabel()
                     ->square()
+                    ->defaultImageUrl(asset('system/profile/user.jpg'))
                     ->visibility('private'),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->translateLabel(),
-
                 Tables\Columns\TextColumn::make('email')
                     ->translateLabel()
                     ->searchable(),
@@ -107,7 +107,6 @@ class UserResource extends Resource
                     ->translateLabel()
                     ->dateTime()
                     ->sortable()
-
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->translateLabel()
@@ -132,6 +131,13 @@ class UserResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('verify')
+                    ->translateLabel()
+                    ->icon('heroicon-m-check-badge')
+                    ->action(function (User $user) {
+                        $user->email_verified_at = now();
+                        $user->save();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

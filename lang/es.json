@@ -246,5 +246,10 @@
     "Invalid or unsupported URL": "URL inválida o no soportada",
     "Error processing file: Verify that FFmpeg is installed": "Error procesando archivo: Verifique que FFmpeg esté instalado",
     "Download error: ": "Error de descarga: ",
-    "Unknown error: ": "Error desconocido: "
+    "Unknown error: ": "Error desconocido: ",
+    "Verify" : "Verificar",
+    "Email verified at": "Fecha de verificación",
+    "Created at": "Fecha de creación", 
+    "Updated at": "Fecha de actualización",
+    "Deleted at": "Fecha de eliminación"
 }

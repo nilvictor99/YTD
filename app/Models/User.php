@@ -3,8 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Scopes\LatestFirstScope;
+use App\Observers\UserObserver;
 use App\Traits\SecuritySystemTrait;
 use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,6 +17,8 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Traits\HasRoles;
 
+#[ScopedBy([LatestFirstScope::class])]
+#[ObservedBy([UserObserver::class])]
 class User extends Authenticatable implements HasAvatar
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class Downloader extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray';
 
     protected static string $view = 'filament.pages.downloader';
 

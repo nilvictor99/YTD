@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\LatestFirstScope;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ScopedBy([LatestFirstScope::class])]
 class Download extends Model
 {
     use SoftDeletes;

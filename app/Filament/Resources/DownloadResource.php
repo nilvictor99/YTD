@@ -18,6 +18,21 @@ class DownloadResource extends Resource
 {
     protected static ?string $model = Download::class;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return static::getModel()::count() > 10 ? 'warning' : 'primary';
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return (__('dowload.Number_of_downloads'));
+    }
+
     public static function getNavigationGroup(): ?string
     {
         return __('navigation-panel.Administration');
